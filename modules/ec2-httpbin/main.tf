@@ -31,7 +31,7 @@ data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["099720109477"]
   filter {
-    name = "name"
+    name   = "name"
     values = [
       "ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-*",
     ]
@@ -39,13 +39,13 @@ data "aws_ami" "amazon_linux" {
 }
 
 resource "aws_instance" "httpbin" {
-  count            = var.instance_count
-  ami              = data.aws_ami.amazon_linux.id
-  instance_type    = var.instance_type
-  vpc_security_group_ids  = [aws_security_group.allow_http.id]
+  count                       = var.instance_count
+  ami                         = data.aws_ami.amazon_linux.id
+  instance_type               = var.instance_type
+  vpc_security_group_ids      = [aws_security_group.allow_http.id]
   # Make the instances running on separate subnets
-  subnet_id        = tolist(data.aws_subnet_ids.all.ids)[count.index]
-  user_data_base64 = base64encode(local.user_data)
+  subnet_id                   = tolist(data.aws_subnet_ids.all.ids)[count.index]
+  user_data_base64            = base64encode(local.user_data)
   associate_public_ip_address = true
   tags = {
     Name  = "httpbin-${count.index + 1}"
